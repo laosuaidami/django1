@@ -104,7 +104,9 @@ def info(request):
     context={'title':'用户中心',
              'user_email':user_email,
              'user_name':request.session['user_name'],
-             'goods_list':goods_list}
+             'goods_list':goods_list,
+             'page_name':1,
+             }
     return  render(request,'df_user/user_center_info.html',context)
 
 @user_decorator.login
@@ -117,7 +119,10 @@ def site(request):
         user.uyoubian=post['uyoubian']
         user.uphone=post['uphone']
         user.save()
-    context={'title':'用户中心','user':user,'page_name':1}
+    context={'title':'用户中心',
+             'user':user,
+             'page_name':1,
+             }
     return render(request,'df_user/user_center_site.html',context)
 
 
