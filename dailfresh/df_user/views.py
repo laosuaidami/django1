@@ -1,8 +1,11 @@
 #coding=utf-8
+from __future__ import unicode_literals
 from django.shortcuts import render,redirect
 from django.http import *
 from hashlib import sha1
 from models import *
+from  . import user_decorator
+from df_goods.models import GoodsInfo
 # Create your views here.
 def register(request):
     return render(request,'df_user/register.html',{'title':"注册"})
@@ -28,10 +31,12 @@ def register_handle(request):
     user.upwd = upwd2
     user.uemail=uemail
     user.save()
+
     #注册成功转到登录页面
     return redirect('/user/login/')
 
 def register_exist(request):
+
     uname = request.GET.get('uname')
     count=UserInfo.objects.filter(uname=uname).count()
     return JsonResponse({'count':count})
@@ -43,6 +48,7 @@ def login(request):
 
 def login_handle(request):
     #接收请求信息
+    print('okkkkkkk')
     post=request.POST
     uname=post.get('username')
     upwd=post.get('pwd')
@@ -56,7 +62,8 @@ def login_handle(request):
         s1=sha1()
         s1.update(upwd)
         if s1.hexdigest()==user[0].upwd :
-            red=HttpResponseRedirect('/user/info/')
+            url=request.COOKIES.get('url','/')
+            red=HttpResponseRedirect(url)
             #记住用户名
             if rember!=0 :
                 red.set_cookie('uname',uname)
@@ -75,12 +82,32 @@ def login_handle(request):
         print('error_usemane')
         return render(request, 'df_user/login.html', context)
 
+def logout(request):
+    request.session.flush()
+    #del request.session['user_id']
+    #del request.session['user_name']
+    return redirect('/')
 
+
+
+
+@user_decorator.login
 def info(request):
     user_email=UserInfo.objects.get(id=request.session['user_id']).uemail
-    context={'title':'用户中心','user_email':user_email,'user_name':request.session['user_name']}
+    #最近浏览
+    goods_ids = request.COOKIES.get('goods_ids','')
+    goods_ids1 = goods_ids.split(',')
+    goods_list = []
+    if len(goods_ids):
+        for goods_id in goods_ids1:
+            goods_list.append(GoodsInfo.objects.get(id=int(goods_id.encode("utf-8"))))
+    context={'title':'用户中心',
+             'user_email':user_email,
+             'user_name':request.session['user_name'],
+             'goods_list':goods_list}
     return  render(request,'df_user/user_center_info.html',context)
 
+@user_decorator.login
 def site(request):
     user=UserInfo.objects.get(id=request.session['user_id'])
     if request.method=='POST':
@@ -90,7 +117,7 @@ def site(request):
         user.uyoubian=post['uyoubian']
         user.uphone=post['uphone']
         user.save()
-    context={'title':'用户中心','user':user}
+    context={'title':'用户中心','user':user,'page_name':1}
     return render(request,'df_user/user_center_site.html',context)
 
 

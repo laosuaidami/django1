@@ -1,3 +1,4 @@
+#coding=utf-8
 """
 Django settings for dailfresh project.
 
@@ -25,19 +26,22 @@ SECRET_KEY = 'sokc_c3c%&cz#qvmag3#4w5r2c)uvrp0*4c1=a(802#@lo6p#d'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = []
 
 
 # Application definition
 
 INSTALLED_APPS = (
     'django.contrib.admin',
+    'django.contrib.admindocs',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'df_user',
+    'df_goods',
+    'tinymce',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -92,7 +96,7 @@ DATABASES = {
 
 LANGUAGE_CODE = 'zh-hans'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 
@@ -108,3 +112,12 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS=[
     os.path.join(BASE_DIR,'static')
 ]
+#开发阶段上传文件路径
+MEDIA_ROOT=os.path.join(BASE_DIR,'static')
+#部署阶段上传文件路径
+#MEDIA_ROOT='/var/www/dailyfresh/static'
+TINYMCE_DEFAULT_CONFIG = {
+    'theme': 'advanced',
+    'width': 600,
+    'height': 400,
+}
