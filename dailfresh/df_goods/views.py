@@ -2,6 +2,7 @@
 from django.shortcuts import render
 from models import *
 from django.core.paginator import Paginator, Page
+from df_cart.models import CartInfo
 # Create your views here.
 def index(request):
     #查询分类最新4条,最热4条数据
@@ -54,7 +55,8 @@ def list(request,tid,pindex,sort):
         'paginator':paginator,
         'typeinfo':typeinfo,
         'sort': sort,
-        'news':news
+        'news':news,
+        'cart_count': cart_count(request)
     }
     return render(request,'df_goods/list.html',context)
 
@@ -68,7 +70,8 @@ def detail(request,goodsID):
         'guest_cart':1,
         'goods':goods,
         'news':news,
-        'id':id
+        'id':id,
+        'cart_count':cart_count(request)
     }
     response = render(request,'df_goods/detail.html',context)
 
@@ -91,7 +94,22 @@ def detail(request,goodsID):
     return response
 
 
+#购物车数量
+def cart_count(request):
+    if request.session.has_key('user_id'):
+        print("ok")
+        return CartInfo.objects.filter(user_id=request.session['user_id']).count()
+    else:
+        return 0
 
+from haystack.views import SearchView
+class MySearchView(SearchView):
+    def extra_context(self):
+        context = super(MySearchView, self).extra_context()
+        context['title']= '搜索'
+        context['guest_cart']=1
+        context['cart_count']=cart_count(self.request)
+        return context
 
 
 

@@ -1,15 +1,15 @@
 {%extends 'base_foot.html'%}
-{%block head%}
+{%block head1%}
+
 <script>
 	$(function(){
 		//使用ajax加载省信息
 		$.get('/cart/add1_1/', function (data) {
-             $('#show_count').text(data.count)
+             $('#show_count').text(data.count);
          });
 	});
-
 </script>
-{%endblock head%}
+{%endblock head1%}
 
 {%block body%}
 	<div class="header_con">
@@ -44,22 +44,27 @@
 
 	<div class="search_bar clearfix">
 		<a href="/" class="logo fl"><img src="/static/images/logo.png"></a>
-{%if page_name == 1%}
-		<div class="sub_page_name fl">|&nbsp;&nbsp;&nbsp;&nbsp;{{title}}</div>
-		<div class="search_con fr">
-			<input type="text" class="input_text fl" name="" placeholder="搜索商品">
-			<input type="button" class="input_btn fr" name="" value="搜索">
-		</div>
-{%endif%}
+
 {%if guest_cart == 1%}
+		<form method='get' action="/search/" target="_blank">
 		<div class="search_con fl">
-			<input type="text" class="input_text fl" name="" placeholder="搜索商品">
-			<input type="button" class="input_btn fr" name="" value="搜索">
+			<input type="text" class="input_text fl" name="q" placeholder="搜索商品">
+			<input type="submit" class="input_btn fr" name="" value="搜索">
 		</div>
+		</form>
 		<div class="guest_cart fr">
 			<a href="/cart/" class="cart_name fl">我的购物车</a>
-			<div class="goods_count fl" id="show_count">0</div>
+			<a href="/cart/" class="goods_count fl" id="show_count">{{cart_count}}</a>
 		</div>
+{%endif%}
+{%if page_name == 1%}
+		<form method='get' action="/search/" target="_blank">
+		<div class="sub_page_name fl">|&nbsp;&nbsp;&nbsp;&nbsp;{{title}}</div>
+		<div class="search_con fr">
+			<input type="text" class="input_text fl" name="q" placeholder="搜索商品">
+			<input type="submit" class="input_btn fr" name="" value="搜索">
+		</div>
+		</form>
 {%endif%}
 	</div>
 
